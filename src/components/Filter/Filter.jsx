@@ -1,8 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { setFilter } from 'components/store/filter/filter-reducer';
+import { selectFilter } from 'components/store/filter/selectors';
 import { FilterBox, FilterLabel, FilterInput } from './Filter.styled';
 
-export const Filter = ({ value, onChange }) => {
+export const Filter = () => {
+  const filter = useSelector(selectFilter);
+  const dispatch = useDispatch();
+
   return (
     <FilterBox>
       <FilterLabel>
@@ -10,15 +15,10 @@ export const Filter = ({ value, onChange }) => {
         <FilterInput
           type="text"
           placeholder="Please enter name..."
-          value={value}
-          onChange={onChange}
+          value={filter}
+          onChange={event => dispatch(setFilter(event.currentTarget.value))}
         />
       </FilterLabel>
     </FilterBox>
   );
-};
-
-Filter.propTypes = {
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
 };

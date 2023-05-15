@@ -13,15 +13,7 @@ const contactsSlice = createSlice({
   initialState,
   reducers: {
     addContact: (state, { payload }) => {
-      const isExist = state.some(
-        ({ name }) => name.toLowerCase() === payload.name.toLowerCase()
-      );
-
-      if (isExist) {
-        alert(`${payload.name} is already in contacts.`);
-        return;
-      }
-      state.push({ id: nanoid(), ...payload });
+      state.push(payload);
     },
     deleteContact: (state, { payload }) => {
       const index = state.findIndex(contact => contact.id === payload);

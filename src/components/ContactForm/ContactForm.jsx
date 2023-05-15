@@ -1,4 +1,7 @@
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact } from 'components/store/contacts/contacts-reducer';
+import { selectContacts } from 'components/store/contacts/selectors';
+import { nanoid } from 'nanoid';
 import { Formik, useFormik } from 'formik';
 import { validationSchema } from './validationSchema';
 import {
@@ -10,14 +13,24 @@ import {
   FormButton,
 } from './ContactForm.styled';
 
-export const ContactForm = ({ onSubmit }) => {
+export const ContactForm = () => {
+  const contacts = useSelector(selectContacts);
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       name: '',
       number: '',
     },
     onSubmit: (values, { resetForm }) => {
-      onSubmit({ ...values });
+      const isExist = contacts.some(
+        ({ name }) => name.toLowerCase() === values.name.toLowerCase()
+      );
+
+      if (isExist) {
+        alert(`${values.name} is already in contacts.`);
+        return;
+      }
+      dispatch(addContact({ id: nanoid(), ...values }));
       resetForm();
     },
     validationSchema: validationSchema,
@@ -25,7 +38,11 @@ export const ContactForm = ({ onSubmit }) => {
 
   return (
     <FormContainer>
-      <Formik>
+      <Formik
+        initialValues={formik.initialValues}
+        validationSchema={formik.validationSchema}
+        onSubmit={formik.onSubmit}
+      >
         <FormEl onSubmit={formik.handleSubmit}>
           <FormLabel htmlFor="name">
             Name
@@ -56,8 +73,4 @@ export const ContactForm = ({ onSubmit }) => {
       </Formik>
     </FormContainer>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
